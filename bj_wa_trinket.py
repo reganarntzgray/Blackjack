@@ -96,7 +96,7 @@ def get_input(prompt,type_= None,max=10,min=1):
             try:
                 v = int(input(prompt))
             except ValueError:
-                print("That is a psychotic thing to answer - try again asshole")
+                print("That is a ridiculous answer ... try again")
                 continue
             if min<=v<=max:
                 return v
@@ -123,7 +123,7 @@ def get_input(prompt,type_= None,max=10,min=1):
                 return v
                 break
             except KeyError:
-                print('Invalid answer - there are only 2 options, try again plz')
+                print('Invalid answer - there are only 2 options, try again please')
                 continue
     else:
         v = str(input(prompt))
@@ -231,7 +231,7 @@ def hit_function(deck,k,reshuffle_limit,hand,player,i_hand_start):
     player.hand[i_hand_start] = hand
     tot = total(hand)
     if tot > 21:
-        print("Rough man, you got a %s, bringing your total to %s  which means you just busted, try again next time loser!" % (str(card),str(tot)))
+        print("Sorry, you got a %s, bringing your total to %s  which means you just busted, try again next time!" % (str(card),str(tot)))
         player.complete[i_hand_start] = True
        
     else:
@@ -295,7 +295,7 @@ def ask_hit(dealer,player,deck,k,reshuffle_limit,hard_table,soft_table,doubles_t
         if player.complete[i_hand_start] == True:
             pass
         elif is_natural(hand):
-            print("Wow %s, you have a natural blackjack! You win 1.5x your initial bet!" % (player.name))
+            print("Wow %s, you have a natural blackjack! You'll win 1.5x your initial bet!" % (player.name))
             enter()
             player.nat = True
             player.complete[i_hand_start]=True
@@ -456,7 +456,7 @@ def round_complete(current_players):
 
 def check_hands(dealer,current_players,deck,k,reshuffle_limit,hard_table,soft_table,doubles_table,splitting_level,doubling,give_advice):
     if is_natural(dealer)==True:
-        print("Sorry playas, you just got burned - I've got a natural betches")
+        print("Sorry players, you're out of luck, I have a natural!")
         enter()
         for player in current_players:
             player.completed = True
