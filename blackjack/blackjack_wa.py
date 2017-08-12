@@ -3,15 +3,7 @@
 Created on Sat Aug  5 10:02:15 2017
 
 @author: Regan
-"""
-
-#notes:
-#bugs: 
-    #need to make sure that the deck is changed by the hit function
-    #allow doubling on one half of split aces
-    #check that doubles table is being used correctly
-
-    
+""" 
 import random as rnd
 import numpy as np
 from multi_key_dict import multi_key_dict
