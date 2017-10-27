@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Aug 12 08:03:35 2017
+Created on Fri Oct 27 12:24:34 2017
 
 @author: Regan
 """
+
 import random as rnd
 import numpy as np
 from collections import OrderedDict
@@ -90,11 +91,24 @@ class Player(Gambler):
 
 #get input function
 
-def get_input(prompt,type_= None,max=10,min=1):
+def get_input(prompt,type_= None,max=10,min=0):
     if type_ == 'int':
         while True:
             try:
                 v = int(input(prompt))
+            except ValueError:
+                print("That is a ridiculous answer ... try again")
+                continue
+            if min<=v<=max:
+                return v
+                break
+            else:
+                 print("That's an absurd number to give")
+                 continue
+    if type_ == 'num':
+        while True:
+            try:
+                v = float(input(prompt))
             except ValueError:
                 print("That is a ridiculous answer ... try again")
                 continue
@@ -477,11 +491,12 @@ def check_hands(dealer,current_players,deck,k,reshuffle_limit,hard_table,soft_ta
 play_again = True
 dev_mode = False
 
+
 #player interaction code (for each game)
 if  dev_mode:
     n = 1
     k = 2
-    c = 100
+    c = 1
     reshuffle_limit = 50
     splitting_level=1
     doubling=1
@@ -504,12 +519,11 @@ else:
     give_advice = get_input("Do you want the Blackjack master to give you strategy advice? Enter y or n: ",'bin')
    
 
-
 #get player names
 if dev_mode:
     deck = create_deck(k)
-    deck[1]=5
-    deck[3]=5
+    deck[1]=1
+    deck[3]=10
     gamblers = []
     names = []
     
@@ -544,8 +558,8 @@ else:
 
 
 #player interaction code (for each hand)
-
-while play_again == True:
+total_chips = 1
+while play_again == True and total_chips>0:
 
     deal=deal_card(deck,k,reshuffle_limit) #get rid of the burn card
     deck=deal['deck']
@@ -556,21 +570,23 @@ while play_again == True:
     current_players = []
 
     for gambler in gamblers:
-        in_i = get_input("%s, would you like to place a bet this round? Enter: y or n: " % gambler.name,'bin')
-        if in_i==True:
-            bet = get_input("How many chips would you like to bet? ",'int',gambler.chips)
-            gambler.__class__ = Player
-            gambler.bet = [bet]
-            deal=deal_card(deck,k,reshuffle_limit)
-            gambler.hand = [[deal['card']]]
-            deck = deal['deck']
-            gambler.complete = [False]
-            gambler.completed = False
-            gambler.nat = False
-            gambler.doubled = False
-            gambler.split = False
-            gambler.pair = False
-            current_players.append(gambler)
+        if gambler.chips>0:
+            
+            in_i = get_input("%s, would you like to place a bet this round? Enter: y or n: " % gambler.name,'bin')
+            if in_i==True:
+                bet = get_input("How many chips would you like to bet? ",'num',gambler.chips)
+                gambler.__class__ = Player
+                gambler.bet = [bet]
+                deal=deal_card(deck,k,reshuffle_limit)
+                gambler.hand = [[deal['card']]]
+                deck = deal['deck']
+                gambler.complete = [False]
+                gambler.completed = False
+                gambler.nat = False
+                gambler.doubled = False
+                gambler.split = False
+                gambler.pair = False
+                current_players.append(gambler)
 
     deal=deal_card(deck,k,reshuffle_limit)
     dealer = [deal['card']]
@@ -603,13 +619,14 @@ while play_again == True:
 
     dealer_score = score(dealer)
     if dealer_score==0:
-        print("Fook me! You're all in luck - I busted")
+        print("You're all in luck - I busted!")
         enter()
-    
+    total_chips = 0
     for player in current_players:
         wl = win_loss(player,dealer_score)
         player.__class__ = Gambler
         player.chips += sum(wl)
+        total_chips += player.chips
         player.add_score(wl)
         insert = (player.name,str(sum(wl)),str(player.chips))
         if sum(wl) > 0:
@@ -619,8 +636,12 @@ while play_again == True:
         else:
             print("Sorry %s, you lose %s chips, your total is now %s" % (player.name,str(-1*sum(wl)),str(player.chips)))
         enter()
-
-    play_again = get_input("Do you gamblers wanna take another chance? Enter y or n: ",'bin')
+    
+    if total_chips>0:
+        play_again = get_input("Do you gamblers wanna take another chance? Enter y or n: ",'bin')
+    else:
+        play_again=False
+    
     if play_again == False:
         chips = []
         for gambler in gamblers:
